@@ -4,7 +4,7 @@ _demo of rocket-board scene running in preview._
 ![demo](https://github.com/decentraland-scenes/rocket-board/blob/master/screenshots/rocket-board.gif)
 
 ## Description
-A rocket board that you can pilot yourself whilst standing on top. The board uses the [cannon.js](https://github.com/schteppe/cannon.js) physics engine so you get to experience the momentum and inertia effects. To view the scene, please visit [here](https://rocket-board.vercel.app/).
+A rocket board that you can stand on and pilot. The board uses the [cannon.js](https://github.com/schteppe/cannon.js) physics engine so you get to experience the momentum and inertia effects. To view the scene, please visit [here](https://rocket-board.vercel.app/).
 
 ## Instructions
 Hop onto the rocket board and fly through the ring, every time you do, another one pops up in a random location in the scene. Press the <kbd>F</kbd> key to thrust upwards and press <kbd>E</kbd> key to thrust forwards in the direction you're facing. Use your mouse to look around and <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> keys on your keyboard to move your avatar forward, left, backward and right respectively.
