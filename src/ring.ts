@@ -5,10 +5,13 @@ import { Sound } from "./sound"
 
 // Sound
 const ringPass = new Sound(new AudioClip("sounds/ringPass.mp3"), false)
+
+// Config
 const EDGE_OFFSET = 6
 const Y_OFFSET = 6
 const GROUND_OFFSET = 10
 const SCENE_SIZE = 68
+const MAX_HEIGHT = 20
 
 export class Ring extends Entity {
   startPos: Vector3
@@ -24,8 +27,12 @@ export class Ring extends Entity {
 
     this.addComponent(
       new utils.TriggerComponent(triggerBox, null, null, null, null, null, () => {
-        // Camera exit
-        this.startPos = new Vector3(Math.random() * SCENE_SIZE + EDGE_OFFSET, Math.random() * 24 + GROUND_OFFSET, Math.random() * SCENE_SIZE + EDGE_OFFSET)
+        // Randomly reposition the ring
+        this.startPos = new Vector3(
+          Math.random() * SCENE_SIZE + EDGE_OFFSET,
+          Math.random() * MAX_HEIGHT + GROUND_OFFSET,
+          Math.random() * SCENE_SIZE + EDGE_OFFSET
+        )
         this.endPos = new Vector3(this.startPos.x, this.startPos.y + GROUND_OFFSET, this.startPos.z)
         ringPass.getComponent(AudioSource).playOnce()
       })
