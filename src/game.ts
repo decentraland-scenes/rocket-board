@@ -8,28 +8,26 @@ import utils from "../node_modules/decentraland-ecs-utils/index"
 
 // Create base scene
 const baseScene: Entity = new Entity()
-baseScene.addComponent(new GLTFShape("models/baseLight.glb"))
-baseScene.addComponent(new Transform({ scale: new Vector3(5, 1, 5) }))
+baseScene.addComponent(new GLTFShape("models/baseLargeCheckered.glb"))
 engine.addEntity(baseScene)
 
 // Rings
-// create trigger area object, setting size and relative position
-let triggerBox = new utils.TriggerBoxShape(new Vector3(3.5, 3, 1), new Vector3(0, 0.5, 0))
-const ring = new Ring(new GLTFShape("models/ring.glb"), new Vector3(32, 12, 32), new Vector3(32, 10, 32), 2, triggerBox)
+let triggerBox = new utils.TriggerBoxShape(new Vector3(3.5, 3, 1), new Vector3(0, 0.5, 0)) // Trigger shape
+const ring = new Ring(new GLTFShape("models/ring.glb"), new Vector3(40, 12, 40), 2, triggerBox)
 
-// Create box
+// Create rocket
 let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) // Camera's forward vector
 let vectorScale: number = 250
 
-const box = new Entity()
-box.addComponent(new Transform({ position: new Vector3(12, 2, 12), scale: new Vector3(1, 1, 1) }))
-box.addComponent(new GLTFShape("models/rocketBoard.glb"))
-engine.addEntity(box)
+const rocketBoard = new Entity()
+rocketBoard.addComponent(new Transform({ position: new Vector3(12, 2, 12), scale: new Vector3(1, 1, 1) }))
+rocketBoard.addComponent(new GLTFShape("models/rocketBoard.glb"))
+engine.addEntity(rocketBoard)
 
 const rocketFlames = new Entity()
-rocketFlames.addComponent(new Transform())
+rocketFlames.addComponent(new Transform({ scale: new Vector3(0, 0, 0) }))
 rocketFlames.addComponent(new GLTFShape("models/rocketFlames.glb"))
-rocketFlames.setParent(box)
+rocketFlames.setParent(rocketBoard)
 
 // Sounds
 const rocketBoosterSound = new Sound(new AudioClip("sounds/rocketBooster.mp3"), true)
@@ -89,7 +87,7 @@ const boxContactMaterial = new CANNON.ContactMaterial(groundMaterial, boxMateria
 world.addContactMaterial(boxContactMaterial)
 
 // Create bodies to represent each of the boxs
-let boxTransform = box.getComponent(Transform)
+let boxTransform = rocketBoard.getComponent(Transform)
 
 const boxBody: CANNON.Body = new CANNON.Body({
   mass: 5, // kg
@@ -126,7 +124,7 @@ class updateSystem implements ISystem {
     boxBody.angularVelocity.setZero() // Prevents the board from rotating
 
     // Position and rotate the boxs in the scene to match their cannon world counterparts
-    box.getComponent(Transform).position.copyFrom(boxBody.position)
+    rocketBoard.getComponent(Transform).position.copyFrom(boxBody.position)
     forwardVector = Vector3.Forward().rotate(Camera.instance.rotation)
   }
 }
@@ -140,28 +138,32 @@ let isFKeyPressed = false
 
 // E Key
 input.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, () => {
-  isEKeyPressed = true
-  rocketFlames.getComponent(Transform).scale.setAll(1)
-  rocketBoosterSound.getComponent(AudioSource).playing = true
+  activateRocketBooster((isEKeyPressed = true))
 })
 input.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, () => {
   isEKeyPressed = false
   if (!isFKeyPressed) {
-    rocketBoosterSound.getComponent(AudioSource).playing = false
-    rocketFlames.getComponent(Transform).scale.setAll(0)
+    activateRocketBooster(false)
   }
 })
 
 // F Key
 input.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, () => {
-  isFKeyPressed = true
-  rocketFlames.getComponent(Transform).scale.setAll(1)
-  rocketBoosterSound.getComponent(AudioSource).playing = true
+  activateRocketBooster((isFKeyPressed = true))
 })
 input.subscribe("BUTTON_UP", ActionButton.SECONDARY, false, () => {
   isFKeyPressed = false
   if (!isEKeyPressed) {
+    activateRocketBooster(false)
+  }
+})
+
+function activateRocketBooster(isOn: boolean) {
+  if (isOn) {
+    rocketFlames.getComponent(Transform).scale.setAll(1)
+    rocketBoosterSound.getComponent(AudioSource).playing = true
+  } else {
     rocketBoosterSound.getComponent(AudioSource).playing = false
     rocketFlames.getComponent(Transform).scale.setAll(0)
   }
-})
+}
