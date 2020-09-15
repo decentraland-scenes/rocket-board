@@ -1,18 +1,17 @@
-# Translocator
-_demo of translocator scene running in preview._
+# Rocket Board
+_demo of rocket-board scene running in preview._
 
-![demo](https://github.com/decentraland-scenes/translocator/blob/master/screenshots/translocator.gif)
+![demo](https://github.com/decentraland-scenes/rocket-board/blob/master/screenshots/rocket-board.gif)
 
 ## Description
-Example of how to create a projectile with physics and combining that with the new spawn to create a translocator disc, which allows a player to teleport to wherever the disc is located. To view the scene, please visit [here](https://translocator.vercel.app/).
+A rocket board that you can pilot yourself whilst standing on top. The board uses the [cannon.js](https://github.com/schteppe/cannon.js) physics engine so you get to experience the momentum and inertia effects. To view the scene, please visit [here](https://rocket-board.vercel.app/).
 
 ## Instructions
-Press the <kbd>Left Mouse Button</kbd> to fire the translocator disc and press again to recall. Press the <kbd>E</kbd> key to teleport to the location of the disc. Use your mouse to look around and <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> keys on your keyboard to move forward, left, backward and right respectively.
+Hop onto the rocket board and fly through the ring, every time you do, another one pops up in a random location in the scene. Press the <kbd>F</kbd> key to thrust upwards and press <kbd>E</kbd> key to thrust forwards in the direction you're facing. Use your mouse to look around and <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> keys on your keyboard to move your avatar forward, left, backward and right respectively.
 
 ## Try it out
 
 **Install the CLI**
-
 Download and install the Decentraland CLI by running the following command:
 
 ```
@@ -20,7 +19,6 @@ $ npm i -g decentraland
 ```
 
 **Previewing the scene**
-
 Download this example and navigate to its directory, then run:
 
 ```
@@ -28,4 +26,5 @@ $  dcl start
 ```
 
 ## Acknowledgements
-Sounds are taken from https://sonniss.com/sound-effects/free-download-game-audio/
+- _rocketBooster.mp3_ modified from https://freesound.org/people/NickTimesAudio/sounds/494827/
+- _ringPassmp3_ modified from https://sonniss.com/sound-effects/free-download-game-audio/
