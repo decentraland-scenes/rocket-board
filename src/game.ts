@@ -22,8 +22,8 @@ let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) 
 let vectorScale: number = 250
 
 const box = new Entity()
-box.addComponent(new Transform({ position: new Vector3(12, 2, 12), scale: new Vector3(2, 1, 2) }))
-box.addComponent(new BoxShape())
+box.addComponent(new Transform({ position: new Vector3(12, 2, 12), scale: new Vector3(1, 1, 1) }))
+box.addComponent(new GLTFShape("models/rocketBoard.glb"))
 engine.addEntity(box)
 
 const redMaterial = new Material()
@@ -93,7 +93,7 @@ let boxTransform = box.getComponent(Transform)
 const boxBody: CANNON.Body = new CANNON.Body({
   mass: 5, // kg
   position: new CANNON.Vec3(boxTransform.position.x, boxTransform.position.y, boxTransform.position.z), // m
-  shape: new CANNON.Box(new CANNON.Vec3(2, 0.5, 2)), // m (Create sphere shaped body with a radius of 1)
+  shape: new CANNON.Box(new CANNON.Vec3(2, 0.1, 2)), // m (Create sphere shaped body with a radius of 1)
 })
 
 boxBody.material = boxMaterial // Add bouncy material to box body
