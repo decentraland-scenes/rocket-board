@@ -26,9 +26,10 @@ box.addComponent(new Transform({ position: new Vector3(12, 2, 12), scale: new Ve
 box.addComponent(new GLTFShape("models/rocketBoard.glb"))
 engine.addEntity(box)
 
-const redMaterial = new Material()
-redMaterial.albedoColor = Color3.Red()
-box.addComponent(redMaterial)
+const rocketFlames = new Entity()
+rocketFlames.addComponent(new Transform())
+rocketFlames.addComponent(new GLTFShape("models/rocketFlames.glb"))
+rocketFlames.setParent(box)
 
 // Sounds
 const rocketBoosterSound = new Sound(new AudioClip("sounds/rocketBooster.mp3"), true)
@@ -122,7 +123,7 @@ class updateSystem implements ISystem {
       )
     }
 
-    boxBody.angularVelocity.setZero()
+    boxBody.angularVelocity.setZero() // Prevents the board from rotating
 
     // Position and rotate the boxs in the scene to match their cannon world counterparts
     box.getComponent(Transform).position.copyFrom(boxBody.position)
@@ -140,19 +141,27 @@ let isFKeyPressed = false
 // E Key
 input.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, () => {
   isEKeyPressed = true
+  rocketFlames.getComponent(Transform).scale.setAll(1)
   rocketBoosterSound.getComponent(AudioSource).playing = true
 })
 input.subscribe("BUTTON_UP", ActionButton.PRIMARY, false, () => {
   isEKeyPressed = false
-  if (!isFKeyPressed) rocketBoosterSound.getComponent(AudioSource).playing = false
+  if (!isFKeyPressed) {
+    rocketBoosterSound.getComponent(AudioSource).playing = false
+    rocketFlames.getComponent(Transform).scale.setAll(0)
+  }
 })
 
 // F Key
 input.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, () => {
   isFKeyPressed = true
+  rocketFlames.getComponent(Transform).scale.setAll(1)
   rocketBoosterSound.getComponent(AudioSource).playing = true
 })
 input.subscribe("BUTTON_UP", ActionButton.SECONDARY, false, () => {
   isFKeyPressed = false
-  if (!isEKeyPressed) rocketBoosterSound.getComponent(AudioSource).playing = false
+  if (!isEKeyPressed) {
+    rocketBoosterSound.getComponent(AudioSource).playing = false
+    rocketFlames.getComponent(Transform).scale.setAll(0)
+  }
 })
