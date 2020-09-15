@@ -1,6 +1,5 @@
 import utils from "../node_modules/decentraland-ecs-utils/index"
 import { ToggleState } from "../node_modules/decentraland-ecs-utils/toggle/toggleComponent"
-import { TriggerBoxShape } from "../node_modules/decentraland-ecs-utils/triggers/triggerSystem"
 import { Sound } from "./sound"
 
 // Sound
@@ -13,11 +12,12 @@ const GROUND_OFFSET = 10
 const SCENE_SIZE = 68
 const MAX_HEIGHT = 20
 
+// Creates a ring that floats up and down continuously
 export class Ring extends Entity {
   startPos: Vector3
   endPos: Vector3
 
-  constructor(model: GLTFShape, startPos: Vector3, time: number, triggerBox: TriggerBoxShape) {
+  constructor(model: GLTFShape, startPos: Vector3, time: number) {
     super()
     engine.addEntity(this)
     this.addComponent(model)
@@ -26,8 +26,9 @@ export class Ring extends Entity {
     this.endPos = new Vector3(startPos.x, startPos.y + Y_OFFSET, startPos.z)
 
     this.addComponent(
-      new utils.TriggerComponent(triggerBox, null, null, null, null, null, () => {
-        // Randomly reposition the ring
+      new utils.TriggerComponent(new utils.TriggerBoxShape(new Vector3(3.5, 3, 1), new Vector3(0, 0.5, 0)),
+        null, null, null, null, null, () => {
+        // Randomly reposition the ring after player passes through the ring
         this.startPos = new Vector3(
           Math.random() * SCENE_SIZE + EDGE_OFFSET,
           Math.random() * MAX_HEIGHT + GROUND_OFFSET,
@@ -38,31 +39,25 @@ export class Ring extends Entity {
       })
     )
 
-    // Move the platform back and forth between start and end positions
+    // Move the ring up and down between start and end positions
     this.addComponent(
       new utils.ToggleComponent(utils.ToggleState.Off, (value: ToggleState) => {
         if (value == utils.ToggleState.On) {
           this.addComponentOrReplace(
-            new utils.MoveTransformComponent(
-              this.startPos,
-              this.endPos,
-              time,
+            new utils.MoveTransformComponent(this.startPos, this.endPos, time,
               () => {
                 this.getComponent(utils.ToggleComponent).toggle()
               },
-              utils.InterpolationType.EASEQUAD
+              utils.InterpolationType.EASEQUAD // Ease in and out
             )
           )
         } else {
           this.addComponentOrReplace(
-            new utils.MoveTransformComponent(
-              this.endPos,
-              this.startPos,
-              time,
+            new utils.MoveTransformComponent(this.endPos, this.startPos, time,
               () => {
                 this.getComponent(utils.ToggleComponent).toggle()
               },
-              utils.InterpolationType.EASEQUAD
+              utils.InterpolationType.EASEQUAD // Ease in and out
             )
           )
         }

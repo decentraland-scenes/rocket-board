@@ -1,24 +1,19 @@
 import { Sound } from "./sound"
 import { Ring } from "./ring"
-import utils from "../node_modules/decentraland-ecs-utils/index"
 
 /*
   IMPORTANT: The tsconfig.json has been configured to include "node_modules/cannon/build/cannon.js"
 */
 
-// Create base scene
+// Create base
 const baseScene: Entity = new Entity()
 baseScene.addComponent(new GLTFShape("models/baseLargeCheckered.glb"))
 engine.addEntity(baseScene)
 
-// Rings
-let triggerBox = new utils.TriggerBoxShape(new Vector3(3.5, 3, 1), new Vector3(0, 0.5, 0)) // Trigger shape
-const ring = new Ring(new GLTFShape("models/ring.glb"), new Vector3(40, 12, 40), 2, triggerBox)
+// Create ring
+const ring = new Ring(new GLTFShape("models/ring.glb"), new Vector3(40, 12, 40), 2)
 
-// Create rocket
-let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) // Camera's forward vector
-let vectorScale: number = 250
-
+// Create rocket board
 const rocketBoard = new Entity()
 rocketBoard.addComponent(new Transform({ position: new Vector3(12, 2, 12), scale: new Vector3(1, 1, 1) }))
 rocketBoard.addComponent(new GLTFShape("models/rocketBoard.glb"))
@@ -28,9 +23,11 @@ const rocketFlames = new Entity()
 rocketFlames.addComponent(new Transform({ scale: new Vector3(0, 0, 0) }))
 rocketFlames.addComponent(new GLTFShape("models/rocketFlames.glb"))
 rocketFlames.setParent(rocketBoard)
+const rocketBoosterSound = new Sound(new AudioClip("sounds/rocketBooster.mp3"), true) // Rocket booster sound
 
-// Sounds
-const rocketBoosterSound = new Sound(new AudioClip("sounds/rocketBooster.mp3"), true)
+// Useful vectors
+let forwardVector: Vector3 = Vector3.Forward().rotate(Camera.instance.rotation) // Camera's forward vector
+let velocityScale: number = 250
 
 // Setup our world
 const world = new CANNON.World()
@@ -86,50 +83,49 @@ const boxMaterial = new CANNON.Material("boxMaterial")
 const boxContactMaterial = new CANNON.ContactMaterial(groundMaterial, boxMaterial, { friction: 0.4, restitution: 0 })
 world.addContactMaterial(boxContactMaterial)
 
-// Create bodies to represent each of the boxs
-let boxTransform = rocketBoard.getComponent(Transform)
+// Create body to represent the rocket board
+let rocketTransform = rocketBoard.getComponent(Transform)
 
-const boxBody: CANNON.Body = new CANNON.Body({
+const rocketBody: CANNON.Body = new CANNON.Body({
   mass: 5, // kg
-  position: new CANNON.Vec3(boxTransform.position.x, boxTransform.position.y, boxTransform.position.z), // m
+  position: new CANNON.Vec3(rocketTransform.position.x, rocketTransform.position.y, rocketTransform.position.z), // m
   shape: new CANNON.Box(new CANNON.Vec3(2, 0.1, 2)), // m (Create sphere shaped body with a radius of 1)
 })
-
-boxBody.material = boxMaterial // Add bouncy material to box body
-boxBody.linearDamping = 0.4 // Round will keep translating even with friction so you need linearDamping
-boxBody.angularDamping = 0.4 // Round bodies will keep rotating even with friction so you need angularDamping
-
-world.addBody(boxBody) // Add body to the world
+rocketBody.material = boxMaterial // Add bouncy material to box body
+world.addBody(rocketBody) // Add body to the world
 
 const fixedTimeStep: number = 1.0 / 60.0 // seconds
 const maxSubSteps: number = 3
 
-class updateSystem implements ISystem {
+class physicsUpdateSystem implements ISystem {
   update(dt: number): void {
     // Instruct the world to perform a single step of simulation.
     // It is generally best to keep the time step and iterations fixed.
     world.step(fixedTimeStep, dt, maxSubSteps)
 
     if (isFKeyPressed) {
-      boxBody.applyForce(new CANNON.Vec3(0, 1 * vectorScale, 0), new CANNON.Vec3(boxBody.position.x, boxBody.position.y, boxBody.position.z))
+      rocketBody.applyForce(
+        new CANNON.Vec3(0, 1 * velocityScale, 0), 
+        new CANNON.Vec3(rocketBody.position.x, rocketBody.position.y, rocketBody.position.z
+      ))
     }
 
     if (isEKeyPressed) {
-      boxBody.applyForce(
-        new CANNON.Vec3(forwardVector.x * vectorScale, 0, forwardVector.z * vectorScale),
-        new CANNON.Vec3(boxBody.position.x, boxBody.position.y, boxBody.position.z)
+      rocketBody.applyForce(
+        new CANNON.Vec3(forwardVector.x * velocityScale, 0, forwardVector.z * velocityScale),
+        new CANNON.Vec3(rocketBody.position.x, rocketBody.position.y, rocketBody.position.z)
       )
     }
 
-    boxBody.angularVelocity.setZero() // Prevents the board from rotating
+    rocketBody.angularVelocity.setZero() // Prevents the board from rotating in any direction
 
-    // Position and rotate the boxs in the scene to match their cannon world counterparts
-    rocketBoard.getComponent(Transform).position.copyFrom(boxBody.position)
-    forwardVector = Vector3.Forward().rotate(Camera.instance.rotation)
+    // Position the rocket board to match that of the rocket body that's affected by physics
+    rocketBoard.getComponent(Transform).position.copyFrom(rocketBody.position)
+    forwardVector = Vector3.Forward().rotate(Camera.instance.rotation) // Update forward vector to wherever the player is facing
   }
 }
 
-engine.addSystem(new updateSystem())
+engine.addSystem(new physicsUpdateSystem())
 
 // Controls (workaround to check if a button is pressed or not)
 const input = Input.instance
@@ -158,10 +154,11 @@ input.subscribe("BUTTON_UP", ActionButton.SECONDARY, false, () => {
   }
 })
 
+// Activate booster animation
 function activateRocketBooster(isOn: boolean) {
   if (isOn) {
-    rocketFlames.getComponent(Transform).scale.setAll(1)
     rocketBoosterSound.getComponent(AudioSource).playing = true
+    rocketFlames.getComponent(Transform).scale.setAll(1)
   } else {
     rocketBoosterSound.getComponent(AudioSource).playing = false
     rocketFlames.getComponent(Transform).scale.setAll(0)
