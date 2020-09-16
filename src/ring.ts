@@ -7,7 +7,7 @@ const ringPass = new Sound(new AudioClip("sounds/ringPass.mp3"), false)
 
 // Config
 const EDGE_OFFSET = 6
-const Y_OFFSET = 6
+const Y_OFFSET = 8
 const GROUND_OFFSET = 10
 const SCENE_SIZE = 68
 const MAX_HEIGHT = 20
@@ -26,7 +26,7 @@ export class Ring extends Entity {
     this.endPos = new Vector3(startPos.x, startPos.y + Y_OFFSET, startPos.z)
 
     this.addComponent(
-      new utils.TriggerComponent(new utils.TriggerBoxShape(new Vector3(3.5, 3, 1), new Vector3(0, 0.5, 0)),
+      new utils.TriggerComponent(new utils.TriggerBoxShape(new Vector3(10, 8.5, 1), new Vector3(0, 1.2, 0)),
         null, null, null, null, null, () => {
         // Randomly reposition the ring after player passes through the ring
         this.startPos = new Vector3(

@@ -12,6 +12,7 @@ engine.addEntity(baseScene)
 
 // Create ring
 const ring = new Ring(new GLTFShape("models/ring.glb"), new Vector3(40, 12, 40), 2)
+ring.getComponent(Transform).scale.setAll(2.5)
 
 // Create rocket board
 const rocketBoard = new Entity()
