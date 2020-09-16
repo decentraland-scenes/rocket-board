@@ -9,7 +9,7 @@ const ringPass = new Sound(new AudioClip("sounds/ringPass.mp3"), false)
 const EDGE_OFFSET = 6
 const Y_OFFSET = 8
 const GROUND_OFFSET = 10
-const SCENE_SIZE = 68
+const SCENE_SIZE = 65
 const MAX_HEIGHT = 20
 
 // Creates a ring that floats up and down continuously
