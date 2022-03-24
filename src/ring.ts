@@ -44,7 +44,7 @@ export class Ring extends Entity {
               this.startPos.z
             )
             ringPass.getComponent(AudioSource).playOnce()
-          },
+          }
         }
       )
     )
@@ -54,7 +54,7 @@ export class Ring extends Entity {
       new utils.ToggleComponent(
         utils.ToggleState.Off,
         (value: utils.ToggleState) => {
-          if (value == utils.ToggleState.On) {
+          if (value === utils.ToggleState.On) {
             this.addComponentOrReplace(
               new utils.MoveTransformComponent(
                 this.startPos,

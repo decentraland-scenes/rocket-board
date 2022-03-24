@@ -10,11 +10,8 @@
     "baseUrl": "."
   },
   "include": [
-    "src/**/*.ts"
-  ],
-  "files": [
-    "node_modules/cannon/build/cannon.min.js"
+    "src/**/*.ts",
+	"./node_modules/cannon-es/dist/cannon-es"
   ],
   "extends": "./node_modules/decentraland-ecs/types/tsconfig.json",
-  "compileOnSave": false
 }
