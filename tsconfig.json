@@ -9,9 +9,12 @@
     },
     "baseUrl": "."
   },
+  "files": [
+    "node_modules/cannon/build/cannon.min.js"
+  ],
   "include": [
-    "src/**/*.ts",
-	"./node_modules/cannon-es/dist/cannon-es"
+    "src/**/*.ts"
   ],
   "extends": "./node_modules/decentraland-ecs/types/tsconfig.json",
+  "compileOnSave": false
 }

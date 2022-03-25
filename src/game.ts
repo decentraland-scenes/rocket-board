@@ -1,6 +1,6 @@
 import { Sound } from './sound'
 import { Ring } from './ring'
-import * as CANNON from './node_modules/cannon-es/dist/cannon-es'
+// import * as CANNON from './node_modules/cannon/dist/cannon'
 //import {World} from "./node_modules/cannon-es/dist/cannon-es"
 
 /*
@@ -25,7 +25,7 @@ const rocketBoard = new Entity()
 rocketBoard.addComponent(
   new Transform({
     position: new Vector3(12, 2, 12),
-    scale: new Vector3(1, 1, 1)
+    scale: new Vector3(1, 1, 1),
   })
 )
 rocketBoard.addComponent(new GLTFShape('models/rocketBoard.glb'))
@@ -61,21 +61,21 @@ const wallShape = new CANNON.Box(new CANNON.Vec3(40, 50, 0.5))
 const wallNorth = new CANNON.Body({
   mass: 0,
   shape: wallShape,
-  position: new CANNON.Vec3(40, 49.5, 80)
+  position: new CANNON.Vec3(40, 49.5, 80),
 })
 world.addBody(wallNorth)
 
 const wallSouth = new CANNON.Body({
   mass: 0,
   shape: wallShape,
-  position: new CANNON.Vec3(40, 49.5, 0)
+  position: new CANNON.Vec3(40, 49.5, 0),
 })
 world.addBody(wallSouth)
 
 const wallEast = new CANNON.Body({
   mass: 0,
   shape: wallShape,
-  position: new CANNON.Vec3(80, 49.5, 40)
+  position: new CANNON.Vec3(80, 49.5, 40),
 })
 wallEast.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI / 2)
 world.addBody(wallEast)
@@ -83,7 +83,7 @@ world.addBody(wallEast)
 const wallWest = new CANNON.Body({
   mass: 0,
   shape: wallShape,
-  position: new CANNON.Vec3(0, 49.5, 40)
+  position: new CANNON.Vec3(0, 49.5, 40),
 })
 wallWest.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI / 2)
 world.addBody(wallWest)
@@ -116,7 +116,7 @@ const rocketBody: CANNON.Body = new CANNON.Body({
     rocketTransform.position.y,
     rocketTransform.position.z
   ), // m
-  shape: new CANNON.Box(new CANNON.Vec3(2, 0.1, 2)) // m (Create sphere shaped body with a radius of 1)
+  shape: new CANNON.Box(new CANNON.Vec3(2, 0.1, 2)), // m (Create sphere shaped body with a radius of 1)
 })
 rocketBody.material = boxMaterial // Add bouncy material to box body
 world.addBody(rocketBody) // Add body to the world
